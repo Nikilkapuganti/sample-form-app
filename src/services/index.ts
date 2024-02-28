@@ -1,5 +1,5 @@
-import sampleForm from './sampleForm/routes';
+import userForm from './user/routes'
 
 export default [
-    ...sampleForm, 
+    ...userForm
 ]

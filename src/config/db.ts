@@ -1,4 +1,5 @@
 import * as mongo from 'mongodb';
+import mongoose from 'mongoose';
 
 
 let mongoDbClient = mongo.MongoClient;
@@ -14,7 +15,7 @@ const handle = (promise: any) => {
 const init = async () => {
   console.log('Connecting to DB');
   let [connection, connectionErr] = await handle(
-    mongoDbClient.connect(`mongodb://localhost:27017/`)
+    mongoose.connect(`mongodb://localhost:27017/taskdb`)
   );
 
   if (connectionErr) {
