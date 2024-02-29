@@ -15,7 +15,7 @@ const handle = (promise: any) => {
 const init = async () => {
   console.log('Connecting to DB');
   let [connection, connectionErr] = await handle(
-    mongoose.connect(`mongodb://localhost:27017/taskdb`)
+    mongoose.connect(`mongodb://localhost:27017/taskdb`,{  serverSelectionTimeoutMS: 5000} )
   );
 
   if (connectionErr) {

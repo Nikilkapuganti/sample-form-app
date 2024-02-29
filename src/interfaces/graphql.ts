@@ -7,13 +7,11 @@ import {
   GraphQLString, 
   GraphQLID,
   GraphQLInputObjectType,
-  GraphQLBoolean,
-  GraphQLInt,
 } from 'graphql';
 import { TaskModel, Task } from './taskinterface';
 import { PubSub } from 'graphql-subscriptions';
 
-const pubsub = new PubSub();
+export const pubsub = new PubSub();
 
 const TaskType = new GraphQLObjectType({
   name: 'Task',
@@ -46,46 +44,7 @@ const TaskInputType = new GraphQLInputObjectType({
   }),
 });
 
-const RootMutation = new GraphQLObjectType({
-  name: 'RootMutationType',
-  fields: {
-    addTask: {
-      type: TaskType,
-      args: {
-        taskInput: { type: TaskInputType },
-      },
-      resolve: async (_, { taskInput }) => {
-        const task = new TaskModel(taskInput);
-        const savedTask = await task.save();
-        pubsub.publish('taskAdded', { taskAdded: savedTask });
-        return savedTask;
-      },
-    },
-    updateTask: {
-      type: TaskType,
-      args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
-        taskInput: { type: TaskInputType },
-      },
-      resolve: async (_, { id, taskInput }) => {
-        const updatedTask = await TaskModel.findByIdAndUpdate(id, taskInput, { new: true });
-        pubsub.publish('taskUpdated', { taskUpdated: updatedTask });
-        return updatedTask;
-      },
-    },
-    deleteTask: {
-      type: TaskType,
-      args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
-      },
-      resolve: async (_, { id }) => {
-        const deletedTask = await TaskModel.findByIdAndDelete(id);
-        pubsub.publish('taskDeleted', { taskDeleted: deletedTask });
-        return deletedTask;
-      },
-    },
-  },
-});
+
 
 const TASK_ADDED = 'TASK_ADDED';
 const TASK_UPDATED = 'TASK_UPDATED';
@@ -114,6 +73,5 @@ const RootSubscription = new GraphQLObjectType({
 
 export const schema = new GraphQLSchema({
   query: RootQuery,
-  mutation: RootMutation,
   subscription: RootSubscription,
 });

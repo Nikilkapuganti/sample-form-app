@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { login, register } from "./userController";
 import { authenticateUser } from "./userModel";
 import { TaskModel } from "../../interfaces/taskinterface";
+import { pubsub } from "../../interfaces/graphql";
 
 
 export default [
@@ -63,6 +64,7 @@ export default [
 
                     // Perform the deletion logic
                     const deletedTask = await TaskModel.findByIdAndDelete(taskId);
+                    pubsub.publish('taskDeleted', { taskDeleted: deletedTask });
 
                     if (!deletedTask) {
                         res.status(404).json({ error: 'Task not found' });
@@ -84,13 +86,16 @@ export default [
 
             async (req: Request, res: Response, next: NextFunction) => {
                 try {
+                    console.log("sdcjjj")
                     //const requestBody = JSON.parse(req.body.query);
                     const requestBody = req.body;
                 const { title, description, dueDate, assignee } = requestBody.variables.input;
                 
-                    console.log("dxfdf", req.body)
+                    console.log("dxfdf",  title, description, dueDate, assignee )
                     const task = new TaskModel({ title, description, dueDate, assignee });
                     const savedTask = await task.save();
+                    pubsub.publish('taskAdded', { taskAdded: savedTask });
+                    
                     console.log('Task saved successfully:', savedTask);
                     res.status(200).json(savedTask);
                 } catch (error) {
@@ -118,6 +123,7 @@ export default [
                         { title, description, dueDate, assignee },
                         { new: true }
                     );
+                    pubsub.publish('taskUpdated', { taskUpdated: updatedTask })
 
                     if (!updatedTask) {
                         throw new Error('Task not found');
