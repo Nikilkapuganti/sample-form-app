@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { login, register } from "./userController";
 import { authenticateUser } from "./userModel";
 import { TaskModel } from "../../interfaces/taskinterface";
-import { pubsub } from "../../interfaces/graphql";
+import { pubsub } from "../../middleware/graphql";
 
 
 export default [

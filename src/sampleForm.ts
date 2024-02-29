@@ -6,13 +6,16 @@ import middleware from './middleware';
 import { applyMiddleware, applyRoutes } from './utils';
 import dotenv from 'dotenv';
 import { init } from './config/db';
+import cookieParser from 'cookie-parser';
+
+
 
 const app = express();
  dotenv.config();
 
 const server = http.createServer(app);
 const { PORT } = process.env;
-
+app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(
   bodyParser.urlencoded({

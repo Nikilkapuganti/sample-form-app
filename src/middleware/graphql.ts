@@ -8,7 +8,7 @@ import {
   GraphQLID,
   GraphQLInputObjectType,
 } from 'graphql';
-import { TaskModel, Task } from './taskinterface';
+import { TaskModel, Task } from '../interfaces/taskinterface';
 import { PubSub } from 'graphql-subscriptions';
 
 export const pubsub = new PubSub();
